@@ -38,7 +38,7 @@ document.getElementById("inputdiv").addEventListener("keypress", (event) => {
 });
 
 // for the message appening part when the user send the message
-document.getElementById("SENDBUTTON").addEventListener("click", () => {
+document.getElementById("SENDBUTTON").addEventListener("click", async () => {
     const messageinput = document.getElementById("inputdiv");
     const appenddiv = document.getElementById("chattingarea");
     if (messageinput.value.length < 2) {
@@ -49,6 +49,17 @@ document.getElementById("SENDBUTTON").addEventListener("click", () => {
         appenddiv.innerHTML += `<div class="w-[50%] h-auto float-right clear-both text-right">
                 ${messageinput.value}
             </div>`;
+
+        const res = await fetch("/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ message: messageinput.value }),
+        });
+
+        const json = await res.json();
+        console.log(json);
     }
     messageinput.value = "";
     messageinput.dispatchEvent(new Event("input"));
