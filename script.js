@@ -1,4 +1,4 @@
-function audiotextChange(){
+function audiotextChange() {
   document.getElementById("inputdiv").addEventListener("input", () => {
     if (document.getElementById("inputdiv").value.length > 0) {
       document.getElementById("SENDBUTTON").classList.replace("hidden", "flex");
@@ -9,40 +9,39 @@ function audiotextChange(){
     }
   });
 }
-audiotextChange()
-function addChatarea(){
-  if(document.getElementById("chattingarea").children.length==0){
-    document.getElementById("chattingarea").classList.replace("flex","hidden")
-  }else{
-    document.getElementById("chattingarea").classList.replace("hidden","flex")
+audiotextChange();
+function addChatarea() {
+  if (document.getElementById("chattingarea").children.length == 0) {
+    document.getElementById("chattingarea").classList.replace("flex", "hidden");
+  } else {
+    document.getElementById("chattingarea").classList.replace("hidden", "flex");
+    document.getElementById("heading").classList.replace("flex", "hidden");
   }
 }
 // for the input field send when enter is clicked
-document.getElementById("inputdiv").addEventListener("keypress",(event)=> {
+document.getElementById("inputdiv").addEventListener("keypress", (event) => {
   if (event.key === "Enter") {
-      document.getElementById("SENDBUTTON").click();
+    document.getElementById("SENDBUTTON").click();
   }
 });
 
-
 // for the message appening part when the user send the message
-document.getElementById("SENDBUTTON").addEventListener("click",()=>{
-  const messageinput=document.getElementById("inputdiv")
-  const appenddiv=document.getElementById("chattingarea")
-  if(messageinput.value.length<2){
-    appenddiv.innerHTML+=`<div class="min-w-full h-auto float-left clear-both">
+document.getElementById("SENDBUTTON").addEventListener("click", () => {
+  const messageinput = document.getElementById("inputdiv");
+  const appenddiv = document.getElementById("chattingarea");
+  if (messageinput.value.length < 2) {
+    appenddiv.innerHTML += `<div class="min-w-full h-auto float-left clear-both">
                 Message too Short!!
-            </div>`
-  }
-  else{
-    appenddiv.innerHTML+=`<div class="w-[50%] h-auto float-right clear-both text-right">
+            </div>`;
+  } else {
+    appenddiv.innerHTML += `<div class="w-[50%] h-auto float-right clear-both text-right">
                 ${messageinput.value}
-            </div>`
+            </div>`;
   }
-  messageinput.value=""
+  messageinput.value = "";
   messageinput.dispatchEvent(new Event("input"));
-  addChatarea()
-})
+  addChatarea();
+});
 
 // Speech Recognition Setup
 const audioButton = document.getElementById("AUDIOINPUT");
