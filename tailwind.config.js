@@ -2,8 +2,15 @@
 module.exports = {
   content: ["./index.html"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        custom: ["CustomFont", "sans-serif"],
+      },
+    },
   },
   plugins: [],
+  corePlugins: {
+    scrollbar: false,
+  },
 }
 
