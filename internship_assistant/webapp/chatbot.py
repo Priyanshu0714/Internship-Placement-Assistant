@@ -157,7 +157,7 @@ def chat_bot(user_input):
         if not recommendations.empty:
             # print("\n✅ Recommended Internships:")
             # print(recommendations.to_string(index=False))
-            return recommendations.to_string(index=False)
+            return recommendations.values.tolist()
         else:
             return "\n❌ No matching internships found. Try a different keyword."
             # print("\n❌ No matching internships found. Try a different keyword.")

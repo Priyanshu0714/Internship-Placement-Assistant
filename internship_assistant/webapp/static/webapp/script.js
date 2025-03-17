@@ -59,7 +59,32 @@ document.getElementById("SENDBUTTON").addEventListener("click", async () => {
         });
 
         const json = await res.json();
-        console.log(json);
+        const response = await json.response;
+        const response_div = document.createElement("div");
+        response_div.classList = [
+            "w-[50%]",
+            "h-auto",
+            "float-left",
+            "clear-both",
+            "text-left",
+        ];
+        const response_table = document.createElement("table");
+        response_table.innerHTML =
+            "<tr><th class='p-2 border'>Title</th><th class='p-2 border'>Company</th><th class='p-2 border'>Stipend</th><th class='p-2 border'>Link</th></tr>";
+        for (i in response) {
+            let row = document.createElement("tr");
+            response_table.append(row);
+            for (j in response[i]) {
+                if (j == 3) {
+                    row.innerHTML += `<td class='p-2 px-5 border'><a src=${response[i][j]}>Apply</a></td>`;
+                } else {
+                    row.innerHTML += `<td class='p-2 px-5 border'>${response[i][j]}</td>`;
+                }
+            }
+        }
+        response_div.append(response_table);
+        appenddiv.append(response_div);
+        console.log(json.response);
     }
     messageinput.value = "";
     messageinput.dispatchEvent(new Event("input"));

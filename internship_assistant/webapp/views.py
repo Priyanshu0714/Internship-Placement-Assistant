@@ -17,7 +17,7 @@ def index(request):
 def chat(request):
     if request.method == "POST":
         message = json.loads(request.body).get("message")
-        scrape_internshala()
+        # scrape_internshala()
         response = chat_bot(message)
 
         return JsonResponse({"response": response})
