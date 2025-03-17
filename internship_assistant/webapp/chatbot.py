@@ -1,9 +1,11 @@
+# from jedi.inference.utils import to_list
 import pandas as pd
 import requests
 import speech_recognition as sr
 import torch
 from bs4 import BeautifulSoup
 from sentence_transformers import SentenceTransformer, util
+from optparse import Values
 
 # Load SBERT Model
 model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -157,7 +159,8 @@ def chat_bot(user_input):
         if not recommendations.empty:
             # print("\n✅ Recommended Internships:")
             # print(recommendations.to_string(index=False))
-            return recommendations.to_string(index=False)
+            return recommendations.values.tolist()
+
         else:
             return "\n❌ No matching internships found. Try a different keyword."
             # print("\n❌ No matching internships found. Try a different keyword.")
@@ -167,4 +170,3 @@ def chat_bot(user_input):
 if __name__ == "__main__":
     scrape_internshala()
     chat_bot()
-

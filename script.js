@@ -26,7 +26,7 @@ document.getElementById("inputdiv").addEventListener("keypress", (event) => {
 });
 
 // for the message appening part when the user send the message
-document.getElementById("SENDBUTTON").addEventListener("click", () => {
+document.getElementById("SENDBUTTON").addEventListener("click", async () => {
   const messageinput = document.getElementById("inputdiv");
   const appenddiv = document.getElementById("chattingarea");
   if (messageinput.value.length < 2) {
@@ -34,9 +34,37 @@ document.getElementById("SENDBUTTON").addEventListener("click", () => {
                 Message too Short!!
             </div>`;
   } else {
-    appenddiv.innerHTML += `<div class="w-[50%] h-auto float-right clear-both text-right">
+    appenddiv.innerHTML += `<div class="max-w-[50%] h-auto float-right clear-both text-right py-2 px-4 bg-[#303030] rounded-l-full rounded-r-full w-auto">
                 ${messageinput.value}
             </div>`;
+
+    const res = await fetch("/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: messageinput.value }),
+    });
+
+    const json = await res.json();
+    console.log(json);
+    const data = await json.response;
+    // if (json.response) {
+    //   appenddiv.innerHTML += `<div class="min-w-full h-auto float-left clear-both">
+    //                 ${json.response}
+    //             </div>`;
+    // }
+    for (let i in data) {
+      let rowContent = "";
+      for (let j in data[i]) {
+        rowContent += `<tr><td>${data[i][j]}</td></tr>`;
+      }
+
+      appenddiv.innerHTML += `
+            <div class="min-w-full h-auto float-left clear-both text-left py-5 px-4 bg-[#303030] rounded-l-full rounded-r-full">
+                <table>${rowContent}</table>
+            </div>`;
+    }
   }
   messageinput.value = "";
   messageinput.dispatchEvent(new Event("input"));
