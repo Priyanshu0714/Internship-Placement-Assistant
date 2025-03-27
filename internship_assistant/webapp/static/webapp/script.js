@@ -12,12 +12,18 @@ function audiotextChange() {
 audiotextChange();
 function addChatarea() {
   if (document.getElementById("chattingarea").children.length == 0) {
-    document.getElementById("chattingarea").classList.replace("flex", "hidden");
+    console.log("childern are zero")
+    document.getElementById("chattingAreaMain").classList.replace("flex", "hidden");
+    document.getElementById("inputMainDiv").classList.replace("h-auto", "h-full");
+
   } else {
-    document.getElementById("chattingarea").classList.replace("hidden", "flex");
+    console.log("have children")
+    document.getElementById("chattingAreaMain").classList.replace("hidden", "flex");
+    document.getElementById("inputMainDiv").classList.replace("h-full", "h-auto");
     document.getElementById("heading").classList.replace("flex", "hidden");
   }
 }
+addChatarea()
 // for the input field send when enter is clicked
 document.getElementById("inputdiv").addEventListener("keypress", (event) => {
   if (event.key === "Enter") {
@@ -34,10 +40,6 @@ document.getElementById("SENDBUTTON").addEventListener("click", async () => {
                 Message too Short!!
             </div>`;
   } else {
-    appenddiv.innerHTML += `<div class="max-w-[50%] h-auto float-right clear-both text-right py-2 px-4 bg-[#303030] rounded-l-full rounded-r-full w-auto">
-                ${messageinput.value}
-            </div>`;
-
     const res = await fetch("/chat", {
       method: "POST",
       headers: {
@@ -45,30 +47,37 @@ document.getElementById("SENDBUTTON").addEventListener("click", async () => {
       },
       body: JSON.stringify({ message: messageinput.value }),
     });
-
+    appenddiv.innerHTML += `<div class="float-right clear-both p-3 bg-[#303030] rounded-xl max-w-[80%]">
+                ${messageinput.value}
+            </div>`;
     const json = await res.json();
-    console.log(json);
-    const data = await json.response;
-    // if (json.response) {
-    //   appenddiv.innerHTML += `<div class="min-w-full h-auto float-left clear-both">
-    //                 ${json.response}
-    //             </div>`;
-    // }
+    const response = await json.response;
+    const response_div = document.createElement("div");
+    response_div.classList = [
+      "float-left",
+      "clear-both",
+      "p-3",
+      "bg-[#303030]",
+      "rounded-xl",
+    ].join(" ");
 
     const response_table = document.createElement("table");
-    for (let i in data) {
+    response_table.innerHTML =
+      "<tr><th class='p-2 border border-[#303030]'>Title</th><th class='p-2 border'>Company</th><th class='p-2 border'>Stipend</th><th class='p-2 border'>Link</th></tr>";
+    for (i in response) {
       let row = document.createElement("tr");
-
-      for (let j in data[i]) {
-        row.innerHTML += `<td>${data[i][j]}</td>`;
-        response_table.appendChild(row);
+      response_table.append(row);
+      for (j in response[i]) {
+        if (j == 3) {
+          row.innerHTML += `<td class='p-2 px-5 border border-white cursor-pointer bg-[#303030]'><a href="https://internshala.com/${response[i][j]}" target="_blank">Apply</a></td>`;
+        } else {
+          row.innerHTML += `<td class='p-2 px-5 border bg-[#303030]'>${response[i][j]}</td>`;
+        }
       }
-
-      appenddiv.innerHTML += `
-            <div class="min-w-full h-auto float-left clear-both text-left py-5 px-4 bg-[#303030] rounded-l-full rounded-r-full">
-                ${response_table.innerHTML}
-            </div>`;
     }
+    response_div.append(response_table);
+    appenddiv.append(response_div);
+    console.log(json.response);
   }
   messageinput.value = "";
   messageinput.dispatchEvent(new Event("input"));
