@@ -14,9 +14,13 @@ This project is a **web scraper and chatbot** designed to help users find intern
 
 ## 📂 Project Structure
 ├── scrape_internshala.py   # Web scraping script
+
 ├── chatbot.py              # Main chatbot logic
+
 ├── requirements.txt        # Dependencies
+
 ├── README.md               # Project documentation
+
 └── internships.csv         # Scraped internship data
 
 ## 🔧 Installation & Setup
@@ -81,8 +85,6 @@ User: Yes
 Bot: Here are some tips for ML resumes:
 - Mention TensorFlow/PyTorch experience
 - Highlight Kaggle participation...
-
-![Screenshot 2025-03-27 044217](https://github.com/user-attachments/assets/27d8c371-d9c5-40aa-b7e4-a42bb57b0864)
 
 
 ## 🏆 Future Improvements
