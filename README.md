@@ -22,7 +22,7 @@ This project is a **web scraper and chatbot** designed to help users find intern
 ## 🔧 Installation & Setup
 ### 1️⃣ Clone the Repository
 bash
-git clone https://github.com/yourusername/internshala-chatbot.git
+git clone https://github.com/Priyanshu0714/Internship-Placement-Assistant.git
 cd internshala-chatbot
 
 ### 2️⃣ Install Dependencies
