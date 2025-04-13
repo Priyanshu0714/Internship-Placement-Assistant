@@ -1,11 +1,11 @@
-import random
-
+# from jedi.inference.utils import to_list
 import pandas as pd
 import requests
 import speech_recognition as sr
 import torch
 from bs4 import BeautifulSoup
 from sentence_transformers import SentenceTransformer, util
+from optparse import Values
 
 # Load SBERT Model
 model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -72,87 +72,101 @@ def scrape_internshala():
     return df
 
 
-# Function to process internship data
+# Function to load and process internship data
 def process_data():
-    df = pd.read_csv("internshala_internships.csv")
+    df = pd.read_csv("internships.csv")
     df.fillna("", inplace=True)
+
+    # Compute embeddings for internship titles
     df["Embedding"] = df["Title"].apply(
         lambda x: model.encode(x, convert_to_tensor=True)
     )
+
     return df
 
 
 # Function to recommend internships using SBERT
-def recommend_internships(query, df, num_recommendations=5):
+def recommend_internships(query, df, num_recommendations=10):
     query_embedding = model.encode(query, convert_to_tensor=True)
+
+    # Compute cosine similarity
     similarities = [
         util.pytorch_cos_sim(query_embedding, emb)[0].item() for emb in df["Embedding"]
     ]
+
+    # Add similarity scores to dataframe
     df["Similarity"] = similarities
+
+    # Get top recommendations
     recommendations = df.sort_values(by="Similarity", ascending=False).head(
         num_recommendations
     )
-    return recommendations[
-        ["Title", "Company", "Stipend", "Location", "Link"]
-    ].reset_index(drop=True)
+
+    return recommendations[["Title", "Company", "Stipend", "Link"]].reset_index(
+        drop=True
+    )
 
 
 # Function for speech input
 def get_speech_input():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        print("🎤 Speak your query...")
-        recognizer.adjust_for_ambient_noise(source)
+        print("\n🎤 Speak your query...")
+        recognizer.adjust_for_ambient_noise(source)  # Adjust to surrounding noise
         try:
-            audio = recognizer.listen(source, timeout=5)
-            query = recognizer.recognize_google(audio, language="hi")
+            audio = recognizer.listen(source, timeout=7)  # Listen for 5 seconds
+            query = recognizer.recognize_google(audio)  # Convert speech to text
             print(f"🗣️ You said: {query}")
             return query
         except sr.UnknownValueError:
-            print("❌ Couldn't understand. Try again.")
+            print("❌ Sorry, I couldn't understand. Try again.")
             return None
         except sr.RequestError:
-            print("❌ Speech service error.")
+            print("❌ Error with speech recognition service.")
             return None
 
 
-# Function to handle chatbot conversation
-def chat_bot(user_input=None):
+# Main Chatbot Loop
+def chat_bot(user_input):
+    # print("\n🔹 Welcome to the Internship Chatbot!")
+
+    # Load and process data
     df = process_data()
 
-    if not user_input:
-        user_input = input("💬 Type your query or say it aloud: ")
-        if not user_input.strip():
-            user_input = get_speech_input()
-            if not user_input:
-                return "❌ No input detected. Try again."
+    while True:
+        # print("\n🔹 Choose input method:")
+        # print("1. Type your query")
+        # print("2. Speak your query")
+        # print("3. Exit")
+        #
+        # choice = input("Enter choice (1/2/3): ").strip()
+        #
+        # if choice == "3":
+        #     print("🔹 Thank you for using the chatbot!")
+        #     break
+        # elif choice == "1":
+        #     user_input = input("\nEnter an internship title: ").strip()
+        # elif choice == "2":
+        #     user_input = get_speech_input()
+        #     if not user_input:
+        #         continue  # If speech input failed, restart loop
+        # else:
+        #     print("❌ Invalid choice! Try again.")
+        #     continue
 
-    recommendations = recommend_internships(user_input, df)
+        recommendations = recommend_internships(user_input, df)
 
-    if not recommendations.empty:
-        response_templates = [
-            "🔹 {Title} at {Company} (Stipend: {Stipend}, Location: {Location}). Apply here: {Link}",
-            "🛠️ Check this: {Title} by {Company}. Location: {Location}, Stipend: {Stipend}. Link: {Link}",
-            "🚀 Great opportunity: {Title} at {Company}. {Location} | ₹{Stipend}. Apply now: {Link}",
-        ]
-        return [
-            random.choice(response_templates).format(**row)
-            for _, row in recommendations.iterrows()
-        ]
-    else:
-        return "❌ No matching internships found. Try a different keyword."
+        if not recommendations.empty:
+            # print("\n✅ Recommended Internships:")
+            # print(recommendations.to_string(index=False))
+            return recommendations.values.tolist()
+        else:
+            return "\n❌ No matching internships found. Try a different keyword."
+            # print("\n❌ No matching internships found. Try a different keyword.")
 
 
 # Run the chatbot
-if __name__ == "__main__":
-    scrape_internshala()
-    while True:
-        response = chat_bot()
-        if isinstance(response, list):
-            for item in response:
-                print(item)
-        else:
-            print(response)
-        print("\nType 'exit' to quit.")
-        if input().lower() == "exit":
-            break
+# if __name__ == "__main__":
+#     scrape_internshala()
+#     chat_bot()
+#
